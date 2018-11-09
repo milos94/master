@@ -4,6 +4,9 @@ project(Master)
 
 set(PROJECT_NAME Master)
 
+#Set export compile commands on so that VSCode can use JASON file for intellisence
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 #Set the correct version of c++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -14,13 +17,13 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-03")
 
+include_directories(graph_lib)
+
 set(PRIVATE_LIBRARIES 
-    matrix_lib)
+    )
 
 set(PUBLIC_LIBRARIES
     )
-
-include_directories(matrix_lib)
 
 set(HEADERS
     )

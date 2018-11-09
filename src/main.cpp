@@ -1,11 +1,12 @@
 //Main file
 
 #include <iostream>
-#include "matrix_lib/matrix.h"
+#include "graph_lib/graph.h"
 
-int main(int argc, char* argv[])
+using std::cout;
+
+int main([[maybe_unused]]int argc, [[maybe_unused]] char* argv[])
 {
-    Matrix m;
     std::cout << "It works\n";
     return 0;
 }
