@@ -7,6 +7,7 @@ using std::cout;
 
 int main([[maybe_unused]]int argc, [[maybe_unused]] char* argv[])
 {
-    std::cout << "It works\n";
+    graph g;
+    std::cout << "It works \n";
     return 0;
 }

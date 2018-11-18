@@ -4,6 +4,8 @@ project(Master)
 
 set(PROJECT_NAME Master)
 
+set(DEFAULT_BUILD_TYPE "Release")
+
 #Set export compile commands on so that VSCode can use JASON file for intellisence
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -17,9 +19,12 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-03")
 
-include_directories(graph_lib)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+add_subdirectory(graph_lib)
 
 set(PRIVATE_LIBRARIES 
+    graph_lib
     )
 
 set(PUBLIC_LIBRARIES
