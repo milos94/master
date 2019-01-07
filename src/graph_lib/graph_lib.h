@@ -1,4 +1,4 @@
-#pragma onece
+#pragma once
 /*  This is only used to declare all of the classes in one namespace
     
 */

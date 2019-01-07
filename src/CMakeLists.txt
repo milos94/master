@@ -15,9 +15,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 #Set correct flags
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wold-style-cast \
+                     -Wcast-align -Wunused -Woverloaded-virtual -Wpedantic \
+                     -Wconversion -Wsign-conversion -Wnull-dereference \
+                     -Wdouble-promotion -Wformat=2 -Wduplicated-cond \
+                     -Wduplicated-branches -Wlogical-op -Wuseless-cast")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
-set(CMAKE_CXX_FLAGS_RELEASE "-03")
+set(CMAKE_CXX_FLAGS_RELEASE "-02")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
