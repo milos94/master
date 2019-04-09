@@ -4,5 +4,6 @@
 */
 
 namespace graph_lib{
+    template <typename V>
     class graph;
 }

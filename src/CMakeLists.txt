@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.12)
 
 project(Master)
 
@@ -27,12 +27,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(graph_lib)
 
-set(PRIVATE_LIBRARIES 
-    graph_lib
-    )
-
-set(PUBLIC_LIBRARIES
-    )
+set(LIBS graphlib)
 
 set(HEADERS
     )
@@ -44,5 +39,4 @@ set(SOURCES
 add_executable(${PROJECT_NAME} ${HEADERS} ${SOURCES})
 
 target_link_libraries(${PROJECT_NAME} 
-                      ${PRIVATE_LIBRARIES}
-                      ${PUBLIC_LIBRARIES})
+                      ${LIBS})

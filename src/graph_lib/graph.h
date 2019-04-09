@@ -25,17 +25,15 @@
 */
 
 
-#include "graph_lib.h"
-#include <vector>
+#include "graph_lib_base.h"
+#include <map>
 
-using graph_lib::graph;
-using vector = std::vector<std::pair<char,char>>;
 
-class graph
+template <typename V>
+class graph_lib::graph
 {
-
 private:
-    vector edges;
+    std::multimap<V, V> edges;
 
 public:
     //rule of five
