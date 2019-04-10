@@ -26,14 +26,16 @@
 
 
 #include "graph_lib_base.h"
-#include <map>
-
+#include <vector>
+#include <algorithm>
+#include <assert.h>
 
 template <typename V>
 class graph_lib::graph
 {
 private:
-    std::multimap<V, V> edges;
+    std::vector<std::pair <V, std::vector<V>>> _adjacency_list;
+    typename std::vector<V>::size_type         _number_of_edges;
 
 public:
     //rule of five
@@ -46,4 +48,63 @@ public:
 
     virtual ~graph() = default;
 
+    [[nodiscard]] constexpr auto num_vertices() const noexcept -> std::vector<std::pair <V, std::vector<V>>>::size_type
+    {
+        return _adjacency_list.size();
+    }
+
+    [[nodiscard]] constexpr auto num_edges() const noexcept -> std::vector<V>::size_type
+    {
+        return _number_of_edges;
+    }
+
+    // all of the required iterators
+    [[nodiscard]] auto begin() noexcept 
+    {
+        return std::begin(_adjacency_list);
+    }
+
+    [[nodiscard]] auto const cbegin() const noexcept
+    {
+        return std::cbegin(_adjacency_list);
+    }
+
+    [[nodiscard]] auto end() noexcept
+    {
+        return std::end(_adjacency_list);
+    }
+
+    [[nodiscard]] auto const cend() const noexcept
+    {
+        return std::end(_adjacency_list);
+    }
+
+    [[nodiscard]] auto rbegin() noexcept
+    {
+        return std::rbegin(_adjacency_list);
+    }
+
+    [[nodiscard]] auto const crbegin() const noexcept
+    {
+        return std::crbegin(_adjacency_list);
+    }
+
+    [[nodiscard]] auto rend() noexcept
+    {
+        return std::rend(_adjacency_list);
+    }
+
+    [[nodiscard]] auto const crend() const noexcept
+    {
+        return std::crend(_adjacency_list);
+    }
+
+    [[nodiscard]] constexpr auto degree(V vertex) const noexcept
+    {
+        auto const & it = std::find(std::begin(_adjacency_list), std::end(_adjacency_list),
+                                                [&](auto const & i){ return i.first == vertex;});
+        assert(it != std::cend(_adjacency_list));
+
+        return it->second.size();
+    }
 };
