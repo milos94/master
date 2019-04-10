@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.12)
-
 set(HEADERS
     graph_lib_base.h
     graph.h

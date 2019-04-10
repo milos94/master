@@ -8,7 +8,7 @@
     
     num_vertices()           Return the number of vertices in G
     num_edges()              Return the number of edges in G
-    vertices():              Return an iterator of the vertices of G
+    vertices()               Return an iterator of the vertices of G
     edges()                  Return an iterator of the edges of G
 
     degree(v)                Return the degree of v
@@ -21,7 +21,7 @@
     insert_vertex(v)         Insert and return a new (isolated) numbering
                              vertex v storing the object o at this position 
     remove_vertex(v)         Remove vertex v and all its incident edges 
-    remove_edge(e)           Remove edge    
+    remove_edge(e)           Remove edge 
 */
 
 
