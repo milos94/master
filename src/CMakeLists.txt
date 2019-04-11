@@ -19,7 +19,8 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wshadow -Wnon-virtual-dtor -Wold-style-cast 
                      -Wcast-align -Wunused -Woverloaded-virtual -Wpedantic \
                      -Wconversion -Wsign-conversion -Wnull-dereference \
                      -Wdouble-promotion -Wformat=2 -Wduplicated-cond \
-                     -Wduplicated-branches -Wlogical-op -Wuseless-cast -Wattributes")
+                     -Wduplicated-branches -Wlogical-op -Wuseless-cast -Wattributes \
+                     -Wno-unknown-pragmas")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-02")
 

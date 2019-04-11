@@ -30,7 +30,7 @@
 #include <algorithm>
 #include <assert.h>
 
-template <typename V>
+template <typename V, bool undirected>
 class graph_lib::graph
 {
 private:
@@ -48,58 +48,76 @@ public:
 
     virtual ~graph() = default;
 
-    [[nodiscard]] constexpr auto num_vertices() const noexcept -> std::vector<std::pair <V, std::vector<V>>>::size_type
+    // returns the number of vertices in G
+    [[nodiscard]] constexpr auto num_vertices() const noexcept 
+        -> typename std::vector< std::pair < V, std::vector<V> > >::size_type
     {
         return _adjacency_list.size();
     }
 
-    [[nodiscard]] constexpr auto num_edges() const noexcept -> std::vector<V>::size_type
+    // returns the number of edges in G
+    [[nodiscard]] constexpr auto num_edges() const noexcept 
+        -> typename std::vector<V>::size_type
     {
         return _number_of_edges;
     }
 
     // all of the required iterators
-    [[nodiscard]] auto begin() noexcept 
+    // by default you iterate trough the std::pair<V, std::vector<V>> where v is the vertex and vector contains all of the adjacent vertices to v
+    #pragma region iterators
+    [[nodiscard]] auto begin() noexcept (noexcept (std::begin(_adjacency_list) ) )  
+        -> typename std::vector< std::pair < V, std::vector<V> > >::iterator
     {
         return std::begin(_adjacency_list);
     }
 
-    [[nodiscard]] auto const cbegin() const noexcept
+    [[nodiscard]] auto const cbegin() const noexcept (noexcept (std::cbegin(_adjacency_list) ) ) 
+        -> typename std::vector< std::pair < V, std::vector<V> > >::const_iterator
     {
         return std::cbegin(_adjacency_list);
     }
 
-    [[nodiscard]] auto end() noexcept
+    [[nodiscard]] auto end() noexcept (noexcept (std::end(_adjacency_list) ) )
+        -> typename std::vector< std::pair <V, std::vector<V> > >::iterator
     {
         return std::end(_adjacency_list);
     }
 
-    [[nodiscard]] auto const cend() const noexcept
+    [[nodiscard]] auto const cend() const noexcept (noexcept (std::cend(_adjacency_list) ) )
+        -> typename std::vector< std::pair < V, std::vector<V> > >::const_iterator
     {
-        return std::end(_adjacency_list);
+        return std::cend(_adjacency_list);
     }
 
-    [[nodiscard]] auto rbegin() noexcept
+    [[nodiscard]] auto rbegin() noexcept (noexcept (std::rbegin(_adjacency_list) ) )
+        -> typename std::vector< std::pair < V, std::vector<V> > >::reverse_iterator
     {
         return std::rbegin(_adjacency_list);
     }
 
-    [[nodiscard]] auto const crbegin() const noexcept
+    [[nodiscard]] auto const crbegin() const noexcept (noexcept (std::crbegin(_adjacency_list) ) )
+        -> typename std::vector< std::pair < V, std::vector<V> > >::const_reverse_iterator
     {
         return std::crbegin(_adjacency_list);
     }
 
-    [[nodiscard]] auto rend() noexcept
+    [[nodiscard]] auto rend() noexcept (noexcept (std::rend(_adjacency_list) ) )
+        -> typename std::vector< std::pair < V, std::vector<V> > >::reverse_iterator
     {
         return std::rend(_adjacency_list);
     }
 
-    [[nodiscard]] auto const crend() const noexcept
+    [[nodiscard]] auto const crend() const noexcept (noexcept (std::crend(_adjacency_list) ) ) 
+        -> typename std::vector< std::pair < V, std::vector<V> > >::const_reverse_iterator
     {
         return std::crend(_adjacency_list);
     }
-
-    [[nodiscard]] constexpr auto degree(V vertex) const noexcept
+    #pragma endregion
+    
+    // returns the degree of the vertex
+    // assets whether the graph contains that vertex
+    [[nodiscard]] constexpr auto degree(V vertex) const 
+        -> typename std::vector<V>::size_type
     {
         auto const & it = std::find(std::begin(_adjacency_list), std::end(_adjacency_list),
                                                 [&](auto const & i){ return i.first == vertex;});
@@ -107,4 +125,28 @@ public:
 
         return it->second.size();
     }
+
+    // returns the vector of adjacent verices of the vertex
+    // assets whether the graph contains that vertex
+    [[nodiscard]] constexpr decltype(auto) adjacent_vertices(V vertex) const
+        -> typename std::vector<V> const &
+    {
+        auto const & it = std::find(std::begin(_adjacency_list), std::end(_adjacency_list),
+                                                [&](auto const & i){ return i.first == vertex;});
+        assert(it != std::cend(_adjacency_list));
+
+        return it->second;
+    }
+
+    // insertns new vertex into the graph
+    // first check if graph already contains new vertex
+    void insert_vertex(V vertex) 
+    {
+        auto const & it = std::find(std::begin(_adjacency_list), std::end(_adjacency_list),
+                                                [&](auto const & i){ return i.first == vertex;});
+        assert(it == std::cend(_adjacency_list));
+
+        _adjacency_list.emplace_back(std::make_pair< V, std::vector<V> >(vertex, std::vector<V>{}) );
+    }
+
 };

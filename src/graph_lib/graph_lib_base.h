@@ -4,6 +4,6 @@
 */
 
 namespace graph_lib{
-    template <typename V>
+    template <typename V, bool undirected = true>
     class graph;
 }
