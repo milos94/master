@@ -124,37 +124,122 @@ public:
     
     // returns the degree of the vertex
     // assets whether the graph contains that vertex
-    [[nodiscard]] constexpr auto degree(V vertex) const 
+    [[nodiscard]] constexpr auto degree(V const & vertex) const 
         -> typename std::vector<node_type>::size_type
     {
-        auto const & it = std::find(std::begin(_adjacency_list), std::end(_adjacency_list),
-                                                [&](auto const & i){ return i.first == vertex;});
-        assert(it != std::cend(_adjacency_list));
+        auto const it = assert_has_edge(vertex, true);
 
         return it->second.size();
     }
 
     // returns the vector of adjacent verices of the vertex
     // assets whether the graph contains that vertex
-    [[nodiscard]] constexpr decltype(auto) adjacent_vertices(V vertex) const
+    [[nodiscard]] constexpr decltype(auto) adjacent_vertices(V const & vertex) const
         -> typename std::vector<node_type> const &
     {
-        auto const & it = std::find(std::begin(_adjacency_list), std::end(_adjacency_list),
-                                                [&](auto const & i){ return i.first == vertex;});
-        assert(it != std::cend(_adjacency_list));
+        auto const it = assert_has_vertex(vertex, true);
 
         return it->second;
     }
 
     // insertns new vertex into the graph
     // first check if graph already contains new vertex
-    void insert_vertex(V vertex) 
+    void insert_vertex(V const & vertex) 
     {
-        auto const & it = std::find(std::begin(_adjacency_list), std::end(_adjacency_list),
-                                                [&](auto const & i){ return i.first == vertex;});
-        assert(it == std::cend(_adjacency_list));
+        auto const it = assert_has_vertex(vertex, false);
 
-        _adjacency_list.emplace_back(std::make_pair< node_type, std::vector<node_type> >(vertex, std::vector<node_type>{}) );
+        _adjacency_list.emplace_back(std::make_pair< node_type, std::vector<node_type> >(node_type{vertex}, std::vector<node_type>{}) );
     }
 
+    // insert edge in the graph
+    // both of the vertices must already exist
+    void insert_edge(V const & first, V const & second)
+    {
+        if constexpr (undirected == true)
+        {
+            insert_edge_undirected(first, second);
+        }
+        else
+        {
+            insert_edge_directed(first, second);
+        }
+        
+    }
+
+private:
+    // Utility helper methods
+
+    // insert edge in the directed graph
+    // first assert that the vertices exist and the edge doesn't exist
+    // only inserts ednge node_a -> node_b
+    void insert_edge_undirected(V const & node_a, V const & node_b)
+    {
+        auto first_it = assert_has_vertex(node_a, true);
+        auto second_it = assert_has_vertex(node_b, true);
+
+        assert_has_edge(node_a, node_b);
+
+        first_it.second.emplace_back(node_b);
+
+    }
+
+    // insert edge in the undirected graph
+    // first assert that the vertices exist and the edge doesn't exist
+    // inserts both node_a -> node_b and node_b -> node_a
+    void insert_edge_directed(V const & node_a, V const & node_b)
+    {
+        auto first_it = assert_has_vertex(node_a, true);
+        auto second_it = assert_has_vertex(node_b, true);
+
+        assert_has_edge(node_a, node_b);
+        assert_has_edge(node_b, node_a);
+
+        first_it.second.emplace_back(node_b);
+        second_it.second.emplace_back(node_a);
+    }
+
+    // assetst whether the vertex exists in the graph
+    // returns the iterator to the vertex if it exists or end if it doesn't
+    [[nodiscard]] auto assert_has_vertex(V const & vertex, bool flag) const
+        -> typename std::vector< std::pair < node_type, std::vector<node_type> > >::const_iterator
+    {
+        auto const it = std::find(std::cbegin(_adjacency_list), std::cend(_adjacency_list),
+                                              [&](auto const & i){ return i.first == node_type{vertex};});
+        assert((it == std::cend(_adjacency_list)) != flag);
+
+        return it;
+    }
+
+    // assetst whether the vertex exists in the graph
+    // returns the const iterator to the vertex if it exists or end if it doesn't
+    [[nodiscard]] auto assert_has_vertex(V const & vertex, bool flag)
+        -> typename std::vector< std::pair < node_type, std::vector<node_type> > >::iterator
+    {
+        auto it = std::find(std::begin(_adjacency_list), std::end(_adjacency_list),
+                                              [&](auto const & i){ return i.first == node_type{vertex};});
+        assert((it == std::end(_adjacency_list)) != flag);
+
+        return it;
+    }
+
+    // assets wheter the edge exists in the graph
+    void assert_has_edge(typename std::vector< std::pair < node_type, std::vector<node_type> > >::iterator const & node_a,
+                         typename std::vector< std::pair < node_type, std::vector<node_type> > >::iterator const & node_b, bool flag) const
+    {
+        auto const & it = std::find(std::cbegin(node_a.second), std::cend(node_a.second),
+                                    node_b.first);
+        
+        assert((it == std::cend(node_a.second)) != flag);
+    }
+    
+    // assets wheter the edge exists in the graph
+    void assert_has_edge(typename std::vector< std::pair < node_type, std::vector<node_type> > >::const_iterator const & node_a,
+                         typename std::vector< std::pair < node_type, std::vector<node_type> > >::const_iterator const & node_b, bool flag) const
+    {
+        auto const & it = std::find(std::cbegin(node_a.second), std::cend(node_a.second),
+                                    node_b.first);
+        
+        assert((it == std::cend(node_a.second)) != flag);
+    }
+    
 };
