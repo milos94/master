@@ -28,7 +28,9 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(graph_lib)
 
-set(LIBS graphlib)
+set(LIBS 
+    graphlib
+    )
 
 set(HEADERS
     )
