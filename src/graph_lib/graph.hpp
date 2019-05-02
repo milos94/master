@@ -71,6 +71,7 @@ public:
     {
         for (auto & [vertex, edges] : _adjacency_list)
         {
+            (void) vertex;
             _number_of_edges = _number_of_edges + std::size(edges);
         }
 
@@ -189,6 +190,11 @@ public:
 
         for( auto & [vert, edges] : _adjacency_list)
         {
+            if(vert == vertex)
+            {
+                continue;
+            }
+
             auto original_end = std::end(edges);
             auto end_after_remove = std::remove( std::begin(edges),
                                                  original_end,

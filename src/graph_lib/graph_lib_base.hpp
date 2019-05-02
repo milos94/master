@@ -18,7 +18,7 @@ namespace graph_lib{
         -> typename std::vector<std::tuple<V,V,V>>;
     
     template <typename V>
-    auto cone_triangulation(std::vector<std::tuple<V,V,V>> const & T, V vertex)
+    auto cone_triangulation(std::vector<std::tuple<V,V,V>> const & T, V q)
         -> typename std::vector<std::tuple<V,V,V,V>>;
 
 }

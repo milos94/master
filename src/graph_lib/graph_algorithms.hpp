@@ -55,13 +55,15 @@ auto graph_lib::find_triangular_faces(graph_lib::graph<V,undirected> const & g)
     std::vector<std::tuple<V,V,V>> ret_val{};
     graph_lib::graph<V, undirected> temp{g};
 
-    for (auto const & [u, edges] : temp)
+    for (auto & [u, edges] : temp)
     {
         // TODO: optimize this (this is O(n^2), bad, so bad, ...)
         // https://media.tenor.com/images/3ac6a44c0b0c650c7f53390553c5058a/tenor.gif
-        for (auto const & v : edges)
+        for (size_t i = 0; i< std::size(edges); ++i)
         {
-            for (auto const & w : edges)
+            auto v = edges.at(i);
+
+            for (auto & w : g.adjacent_vertices(u))
             {
                 // since graph reprezents a polyhedron there will be no vertices connnected to themself
                 if(temp.are_adjacent(v,w))
@@ -69,7 +71,7 @@ auto graph_lib::find_triangular_faces(graph_lib::graph<V,undirected> const & g)
                     ret_val.emplace_back(std::tuple{u, v, w});
                 }
             }
-            temp.remove_edge(u,v);
+            temp.remove_edge(u, v);
         }
     }
     return ret_val;
@@ -86,12 +88,12 @@ for each triple (u,v,w) in T.elements() {
 return S
 */
 template <typename V>
-auto graph_lib::cone_triangulation(std::vector<std::tuple<V,V,V>> const & T, V vertex)
+auto graph_lib::cone_triangulation(std::vector<std::tuple<V,V,V>> const & T, V q)
         -> typename std::vector<std::tuple<V,V,V,V>>
 {
     std::vector<std::tuple<V,V,V,V>> ret_val{};
 
-    for(auto const & [u, v, q] : T)
+    for(auto const & [u, v, w] : T)
     {
         if((u != q) && (v != q) && (w != q))
         {
@@ -100,4 +102,20 @@ auto graph_lib::cone_triangulation(std::vector<std::tuple<V,V,V>> const & T, V v
     }
 
     return ret_val;
+}
+
+template <typename V, bool undirected>
+std::ostream & operator<<(std::ostream & ost, graph_lib::graph<V,undirected> const & g)
+{
+    for (auto it = g.cbegin(); it != g.cend(); ++it)
+    {
+        ost << "Vertex: " << it->first << " is connected to: ";
+        for (auto const & edge : std::as_const(it->second))
+        {
+            ost << edge << ", ";
+        }
+        ost << ";\n";
+    }
+
+    return ost;
 }
