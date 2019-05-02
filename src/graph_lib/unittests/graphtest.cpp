@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "directedgraphtest.hpp"
+#include "algorithmstest.hpp"
 #include "graph.hpp"
 
 #include <iostream>
@@ -140,12 +141,8 @@ TEST(graph, adjacent_vertices)
     ASSERT_EQ(3, g.num_edges());
 
     std::vector vec{'B','C'};
-    size_t index = 0;
-    for(auto const & it : g.adjacent_vertices('A'))
-    {
-        ASSERT_EQ(it, vec.at(index));
-        ++index;
-    }
+
+    ASSERT_EQ(vec, g.adjacent_vertices('A'));
 
     g.insert_vertex('D');
 
@@ -153,12 +150,7 @@ TEST(graph, adjacent_vertices)
 
     vec.emplace_back('D');
     
-    index = 0;
-    for(auto const & it : g.adjacent_vertices('A'))
-    {
-        ASSERT_EQ(it, vec.at(index));
-        ++index;
-    }
+    ASSERT_EQ(vec, g.adjacent_vertices('A'));
 
 }
 

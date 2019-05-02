@@ -26,7 +26,6 @@
 
 
 #include "graph_lib_base.hpp"
-#include <vector>
 #include <string>
 #include <algorithm>
 #include <type_traits>
@@ -41,6 +40,7 @@ public:
                             < std::is_same_v < std::decay<V>, char * >,
                               std::string,
                               V >;
+    using size_type = typename std::vector<node_type>::size_type;
 
 private:
 
@@ -52,14 +52,14 @@ private:
 public:
 
 // rule of five plus default virtual destructor    
-#pragma region rule_of_file
+#pragma region rule_of_five
 
     explicit graph() = default;
-    explicit graph(const graph&) = default;
-    explicit graph(graph&&) = default;
+    explicit graph(graph const &) = default;
+    explicit graph(graph &&) = default;
 
-    graph& operator=(const graph&) = default;
-    graph& operator=(graph&&) = default;
+    graph & operator=(graph const &) = default;
+    graph & operator=(graph &&) = default;
 
     virtual ~graph() = default;
 

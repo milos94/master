@@ -1,6 +1,7 @@
 set(HEADERS
     graph_lib_base.hpp
     graph.hpp
+    graph_algorithms.hpp
     )
 
 set(SOURCES
