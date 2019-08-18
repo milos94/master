@@ -5,7 +5,7 @@
 
 template <typename V, bool undirected>
 auto graph_lib::find_all_connected_vertices_of_the_same_degree(graph_lib::graph<V,undirected> const & g,
-                                                               typename graph_lib::graph<V,undirected>::size_type const & order)
+                                                               typename graph_lib::graph<V,undirected>::edges_size_type const & order)
     -> typename std::vector<std::pair<V,V>>
 {
     std::vector<std::pair<V,V>> ret_val{};

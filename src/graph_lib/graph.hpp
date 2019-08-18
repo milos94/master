@@ -36,37 +36,43 @@ class graph_lib::graph
 {
 public:
 
+    // aliases for conveniance
     using node_type = std::conditional_t
                             < std::is_same_v < std::decay<V>, char * >,
                               std::string,
                               V >;
-    using size_type = typename std::vector<node_type>::size_type;
+    using graph_vector_type = std::vector<std::pair <node_type, std::vector<node_type>>>;
+    using edges_vector_type = std::vector<node_type>;
+
+    using vertices_size_type = typename graph_vector_type::size_type;
+    using edges_size_type = typename edges_vector_type::size_type;
 
 private:
 
     // Member variables
 
-    std::vector<std::pair <node_type, std::vector<node_type>>> _adjacency_list;
-    typename std::vector<node_type>::size_type                 _number_of_edges;
+    graph_vector_type _adjacency_list;
+    edges_size_type   _number_of_edges;
 
 public:
 
 // rule of five plus default virtual destructor    
 #pragma region rule_of_five
 
-    explicit graph() = default;
-    explicit graph(graph const &) = default;
-    explicit graph(graph &&) = default;
+    explicit graph() noexcept(std::is_nothrow_default_constructible_v<graph_vector_type>) = default;
+    explicit graph(graph const &) noexcept(std::is_nothrow_copy_constructible_v<graph_vector_type>) = default;
+    explicit graph(graph &&) noexcept(std::is_nothrow_move_constructible_v<graph_vector_type>) = default;
 
-    graph & operator=(graph const &) = default;
-    graph & operator=(graph &&) = default;
+    graph & operator=(graph const &) noexcept(std::is_nothrow_copy_assignable_v<graph_vector_type>) = default;
+    graph & operator=(graph &&) noexcept(std::is_nothrow_move_assignable_v<graph_vector_type>) = default;
 
     virtual ~graph() = default;
 
 #pragma endregion
     
     // constructor that takes a adjacency list as argument
-    explicit graph(std::vector<std::pair <node_type, std::vector<node_type>>> adjacency_list)
+    explicit graph(graph_vector_type adjacency_list) 
+                noexcept(std::is_nothrow_copy_constructible_v<graph_vector_type>)
                     : _adjacency_list{adjacency_list}, _number_of_edges{}
     {
         for (auto & [vertex, edges] : _adjacency_list)
@@ -84,14 +90,14 @@ public:
 
     // returns the number of vertices in G
     [[nodiscard]] constexpr auto num_vertices() const noexcept 
-        -> typename std::vector< std::pair < node_type, std::vector<node_type> > >::size_type
+        -> vertices_size_type
     {
         return _adjacency_list.size();
     }
 
     // returns the number of edges in G
     [[nodiscard]] constexpr auto num_edges() const noexcept 
-        -> typename std::vector<node_type>::size_type
+        -> edges_size_type
     {
         return _number_of_edges;
     }
@@ -100,49 +106,49 @@ public:
     // by default you iterate trough the std::pair<V, std::vector<V>> where v is the vertex and vector contains all of the adjacent vertices to v
     #pragma region iterators
     [[nodiscard]] auto begin() noexcept (noexcept (std::begin(_adjacency_list) ) )  
-        -> typename std::vector< std::pair < node_type, std::vector<node_type> > >::iterator
+        -> typename graph_vector_type::iterator
     {
         return std::begin(_adjacency_list);
     }
 
     [[nodiscard]] auto const cbegin() const noexcept (noexcept (std::cbegin(_adjacency_list) ) ) 
-        -> typename std::vector< std::pair < node_type, std::vector<node_type> > >::const_iterator
+        -> typename graph_vector_type::const_iterator
     {
         return std::cbegin(_adjacency_list);
     }
 
     [[nodiscard]] auto end() noexcept (noexcept (std::end(_adjacency_list) ) )
-        -> typename std::vector< std::pair <node_type, std::vector<node_type> > >::iterator
+        -> typename graph_vector_type::iterator
     {
         return std::end(_adjacency_list);
     }
 
     [[nodiscard]] auto const cend() const noexcept (noexcept (std::cend(_adjacency_list) ) )
-        -> typename std::vector< std::pair < node_type, std::vector<node_type> > >::const_iterator
+        -> typename graph_vector_type::const_iterator
     {
         return std::cend(_adjacency_list);
     }
 
     [[nodiscard]] auto rbegin() noexcept (noexcept (std::rbegin(_adjacency_list) ) )
-        -> typename std::vector< std::pair < node_type, std::vector<node_type> > >::reverse_iterator
+        -> typename graph_vector_type::reverse_iterator
     {
         return std::rbegin(_adjacency_list);
     }
 
     [[nodiscard]] auto const crbegin() const noexcept (noexcept (std::crbegin(_adjacency_list) ) )
-        -> typename std::vector< std::pair < node_type, std::vector<node_type> > >::const_reverse_iterator
+        -> typename graph_vector_type::const_reverse_iterator
     {
         return std::crbegin(_adjacency_list);
     }
 
     [[nodiscard]] auto rend() noexcept (noexcept (std::rend(_adjacency_list) ) )
-        -> typename std::vector< std::pair < node_type, std::vector<node_type> > >::reverse_iterator
+        -> typename graph_vector_type::reverse_iterator
     {
         return std::rend(_adjacency_list);
     }
 
     [[nodiscard]] auto const crend() const noexcept (noexcept (std::crend(_adjacency_list) ) ) 
-        -> typename std::vector< std::pair < node_type, std::vector<node_type> > >::const_reverse_iterator
+        -> typename graph_vector_type::const_reverse_iterator
     {
         return std::crend(_adjacency_list);
     }
@@ -151,7 +157,7 @@ public:
     // returns the degree of the vertex
     // assets whether the graph contains that vertex
     [[nodiscard]] constexpr auto degree(V const & vertex) const 
-        -> typename std::vector<node_type>::size_type
+        -> edges_size_type
     {
         auto const it = assert_has_vertex(vertex, true);
 
@@ -161,21 +167,20 @@ public:
     // returns the vector of adjacent verices of the vertex
     // assets whether the graph contains that vertex
     [[nodiscard]] constexpr decltype(auto) adjacent_vertices(V const & vertex) const
-        -> typename std::vector<node_type> const &
+        -> edges_vector_type const &
     {
         auto const it = assert_has_vertex(vertex, true);
 
         return it->second;
     }
 
-    // insertns new vertex into the graph
+    // inserts new vertex into the graph
     // first check if graph already contains new vertex
-    void insert_vertex(V const & vertex) 
+    void insert_vertex(V && vertex) 
     {
         auto const it = assert_has_vertex(vertex, false);
 
-        _adjacency_list.emplace(it, std::make_pair< node_type, std::vector<node_type> >
-                                                    (node_type{vertex}, std::vector<node_type>{}) );
+        _adjacency_list.emplace(it, std::pair{ node_type{std::forward<V>(vertex)}, std::vector<node_type>{}} );
     }
 
     // removes the vertex and all of its edges from the graph
@@ -199,7 +204,7 @@ public:
             auto end_after_remove = std::remove( std::begin(edges),
                                                  original_end,
                                                  temp);
-            _number_of_edges -= static_cast<typename std::vector<node_type>::size_type>
+            _number_of_edges -= static_cast<edges_size_type>
                                     (std::abs(std::distance(end_after_remove, original_end)));
 
             edges.erase(end_after_remove, original_end);
@@ -277,7 +282,7 @@ private:
     // assetst whether the vertex exists in the graph
     // returns the iterator to the vertex if it exists or end if it doesn't
     [[nodiscard]] auto assert_has_vertex(V const & vertex, bool flag) const
-        -> typename std::vector< std::pair < node_type, std::vector<node_type> > >::const_iterator
+        -> typename graph_vector_type::const_iterator
     {
         auto const it = std::find_if(std::cbegin(_adjacency_list), std::cend(_adjacency_list),
                                               [&](auto const & i){ return i.first == node_type{vertex};});
@@ -289,7 +294,7 @@ private:
     // assetst whether the vertex exists in the graph
     // returns the const iterator to the vertex if it exists or end if it doesn't
     [[nodiscard]] auto assert_has_vertex(V const & vertex, bool flag)
-        -> typename std::vector< std::pair < node_type, std::vector<node_type> > >::iterator
+        -> typename graph_vector_type::iterator
     {
         auto it = std::find_if(std::begin(_adjacency_list), std::end(_adjacency_list),
                                               [&](auto const & i){ return i.first == node_type{vertex};});
@@ -299,8 +304,8 @@ private:
     }
 
     // assets wheter the edge exists in the graph
-    void assert_has_edge(typename std::vector< std::pair < node_type, std::vector<node_type> > >::iterator const & node_a,
-                         typename std::vector< std::pair < node_type, std::vector<node_type> > >::iterator const & node_b, 
+    void assert_has_edge(typename graph_vector_type::iterator const & node_a,
+                         typename graph_vector_type::iterator const & node_b, 
                          bool flag) const
     {
         auto const it = std::find(std::cbegin(node_a->second), std::cend(node_a->second),
@@ -310,8 +315,8 @@ private:
     }
     
     // assets wheter the edge exists in the graph
-    void assert_has_edge(typename std::vector< std::pair < node_type, std::vector<node_type> > >::const_iterator const & node_a,
-                         typename std::vector< std::pair < node_type, std::vector<node_type> > >::const_iterator const & node_b,
+    void assert_has_edge(typename graph_vector_type::const_iterator const & node_a,
+                         typename graph_vector_type::const_iterator const & node_b,
                          bool flag) const
     {
         auto const it = std::find(std::cbegin(node_a->second), std::cend(node_a->second),
