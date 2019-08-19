@@ -1,10 +1,11 @@
 #include <gtest/gtest.h>
+#include <string>
+
 #include "graph_lib_base.hpp"
 #include "graph_algorithms.hpp"
 
 // included only in case some debug lines are needed
-#include <iostream>
-#include <string>
+//#include <iostream>
 
 TEST(algorithms, find_all_connected_vertices_of_the_same_degree)
 {

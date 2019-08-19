@@ -3,7 +3,8 @@
 #include "algorithmstest.hpp"
 #include "graph.hpp"
 
-#include <iostream>
+// included only in case some debug lines are needed
+//#include <iostream>
 
 TEST(graph, insert_vetex)
 {
