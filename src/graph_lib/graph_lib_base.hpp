@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 /*  This is only used to declare all of the classes in one namespace
-    
 */
 
 namespace graph_lib{
@@ -10,7 +9,7 @@ namespace graph_lib{
 
     template <typename V, bool undirected>
     auto find_all_connected_vertices_of_the_same_degree(graph<V,undirected> const & g,
-                                                        typename graph<V,undirected>::size_type const & order)
+                                                        typename graph<V,undirected>::size_type const & degree)
         -> typename std::vector<std::pair<V,V>>;
     
     template <typename V, bool undirected>

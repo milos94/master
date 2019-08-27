@@ -36,7 +36,7 @@ class graph_lib::graph
 {
 public:
 
-    // aliases for conveniance
+    // aliases for convenience
     using node_type = std::conditional_t
                             < std::is_same_v < std::decay<V>, char * >,
                               std::string,
@@ -45,11 +45,11 @@ public:
     using edges_vector_type = std::vector<node_type>;
 
     using vertices_size_type = typename graph_vector_type::size_type;
-    using edges_size_type = typename edges_vector_type::size_type;
+    using edges_size_type    = typename edges_vector_type::size_type;
 
 private:
 
-    // Member variables
+    // member variables
 
     graph_vector_type _adjacency_list;
     edges_size_type   _number_of_edges;
@@ -70,8 +70,8 @@ public:
 
 #pragma endregion
     
-    // constructor that takes a adjacency list as argument
-    explicit graph(graph_vector_type adjacency_list) 
+    // constructors that take an adjacency list as argument
+    explicit graph(graph_vector_type const & adjacency_list) 
                 noexcept(std::is_nothrow_copy_constructible_v<graph_vector_type>)
                     : _adjacency_list{adjacency_list}, _number_of_edges{}
     {
@@ -85,26 +85,29 @@ public:
         {
             _number_of_edges = _number_of_edges / 2;
         }
-
     }
 
-    // returns the number of vertices in G
-    [[nodiscard]] constexpr auto num_vertices() const noexcept 
-        -> vertices_size_type
+    explicit graph(graph_vector_type && adjacency_list) 
+                noexcept(std::is_nothrow_move_constructible_v<graph_vector_type>)
+                    : _adjacency_list{std::move(adjacency_list)}, _number_of_edges{}
     {
-        return _adjacency_list.size();
-    }
+        for (auto & [vertex, edges] : _adjacency_list)
+        {
+            (void) vertex;
+            _number_of_edges = _number_of_edges + std::size(edges);
+        }
 
-    // returns the number of edges in G
-    [[nodiscard]] constexpr auto num_edges() const noexcept 
-        -> edges_size_type
-    {
-        return _number_of_edges;
+        if constexpr (undirected == true)
+        {
+            _number_of_edges = _number_of_edges / 2;
+        }
     }
 
     // all of the required iterators
-    // by default you iterate trough the std::pair<V, std::vector<V>> where v is the vertex and vector contains all of the adjacent vertices to v
+    // by default, you iterate trough the std::pair<V, std::vector<V>> where V is the vertex
+    // and vector contains all of the adjacent vertices to V
     #pragma region iterators
+    
     [[nodiscard]] auto begin() noexcept (noexcept (std::begin(_adjacency_list) ) )  
         -> typename graph_vector_type::iterator
     {
@@ -153,9 +156,23 @@ public:
         return std::crend(_adjacency_list);
     }
     #pragma endregion
-    
+
+    // returns the number of vertices in G
+    [[nodiscard]] constexpr auto num_vertices() const noexcept 
+        -> vertices_size_type
+    {
+        return _adjacency_list.size();
+    }
+
+    // returns the number of edges in G
+    [[nodiscard]] constexpr auto num_edges() const noexcept 
+        -> edges_size_type
+    {
+        return _number_of_edges;
+    }
+
     // returns the degree of the vertex
-    // assets whether the graph contains that vertex
+    // asserts whether the graph contains that vertex
     [[nodiscard]] constexpr auto degree(V const & vertex) const 
         -> edges_size_type
     {
@@ -164,8 +181,8 @@ public:
         return it->second.size();
     }
 
-    // returns the vector of adjacent verices of the vertex
-    // assets whether the graph contains that vertex
+    // returns the vector of adjacent vertices of the vertex
+    // asserts whether the graph contains that vertex
     [[nodiscard]] constexpr decltype(auto) adjacent_vertices(V const & vertex) const
         -> edges_vector_type const &
     {
@@ -189,7 +206,7 @@ public:
     {
         auto it = assert_has_vertex(vertex, true);
 
-        // create a temporary to use inside the algorythim (in case that the V != node_type)
+        // create a temporary to use inside the algorithm (in case that the V != node_type)
         // to make sure that no implicit temporaries are created
         node_type temp{vertex};
 
@@ -253,7 +270,7 @@ public:
 
     // checks whether the two vertices are adjacent
     // basically the same as assert_has_edge, but without assertion
-    [[nodiscard]] bool are_adjacent(V const & node_a, V const & node_b)
+    [[nodiscard]] bool are_adjacent(V const & node_a, V const & node_b) const
     {
         auto const first_it  = assert_has_vertex(node_a, true);
         auto const second_it = assert_has_vertex(node_b, true);
@@ -277,10 +294,11 @@ public:
     }
 
 private:
-    // Utility helper methods
+    // utility helper methods
 
-    // assetst whether the vertex exists in the graph
-    // returns the iterator to the vertex if it exists or end if it doesn't
+    // given the bool flag asserts whether the vertex exists or doesn't exist in the graph
+    // if flag == true asserts that vertex exists
+    // if flag == flase asserts that vertex doesn't exist
     [[nodiscard]] auto assert_has_vertex(V const & vertex, bool flag) const
         -> typename graph_vector_type::const_iterator
     {
@@ -291,8 +309,9 @@ private:
         return it;
     }
 
-    // assetst whether the vertex exists in the graph
-    // returns the const iterator to the vertex if it exists or end if it doesn't
+    // given the bool flag asserts whether the vertex exists or doesn't exist in the graph
+    // if flag == true asserts that vertex exists
+    // if flag == flase asserts that vertex doesn't exist
     [[nodiscard]] auto assert_has_vertex(V const & vertex, bool flag)
         -> typename graph_vector_type::iterator
     {
@@ -303,7 +322,9 @@ private:
         return it;
     }
 
-    // assets wheter the edge exists in the graph
+    // given the bool flag asserts whether the edge exists or doesn't exist in the graph
+    // if flag == true asserts that edge exists
+    // if flag == flase asserts that edge doesn't exist
     void assert_has_edge(typename graph_vector_type::iterator const & node_a,
                          typename graph_vector_type::iterator const & node_b, 
                          bool flag) const
@@ -314,7 +335,9 @@ private:
         assert((it == std::cend(node_a->second)) != flag);
     }
     
-    // assets wheter the edge exists in the graph
+    // given the bool flag asserts whether the edge exists or doesn't exist in the graph
+    // if flag == true asserts that edge exists
+    // if flag == flase asserts that edge doesn't exist
     void assert_has_edge(typename graph_vector_type::const_iterator const & node_a,
                          typename graph_vector_type::const_iterator const & node_b,
                          bool flag) const
@@ -325,7 +348,7 @@ private:
         assert((it == std::cend(node_a->second)) != flag);
     }
 
-    // insert edge in the directed graph
+    // insert edge into the directed graph
     // first assert that the vertices exist and the edge doesn't exist
     // only inserts edge node_a -> node_b
     void insert_edge_directed(V const & node_a, V const & node_b)
@@ -341,7 +364,7 @@ private:
 
     }
 
-    // insert edge in the undirected graph
+    // insert edge into the undirected graph
     // first assert that the vertices exist and the edge doesn't exist
     // inserts both node_a -> node_b and node_b -> node_a
     void insert_edge_undirected(V const & node_a, V const & node_b)
@@ -359,7 +382,7 @@ private:
     }
 
     // remove the edge from the undirected graph
-    // assert that the egdes (both node_a -> node_b and node_b -> node_a) exist and remove them 
+    // assert that the egdes both node_a -> node_b and node_b -> node_a exist and remove them 
     void remove_edge_undirected(V const & node_a, V const & node_b)
     {
         auto first_it  = assert_has_vertex(node_a, true);

@@ -117,8 +117,6 @@ TEST(algorithms, cone_triangulation)
                                                 }
                                    };
 
-    
-
     auto results = graph_lib::find_triangular_faces(g);
 
     std::vector<std::tuple<std::string, std::string, std::string> > vec{ std::tuple{ "A1","A2","B1"}, std::tuple{ "A1","A2","C4"}, std::tuple{ "A1","B1","A2"},
@@ -138,15 +136,21 @@ TEST(algorithms, cone_triangulation)
 
     auto cone_triang = graph_lib::cone_triangulation(results, std::string{"A2"});
 
-    std::vector<std::tuple<std::string, std::string, std::string, std::string> > expected_cone{ std::tuple{ "A2","A1","B1","A5"}, std::tuple{ "A2","A1","C4","C1"}, std::tuple{ "A2","A3","A4","B3"}, 
-                                                                                                std::tuple{ "A2","A3","A4","C2"}, std::tuple{ "A2","A3","B3","A4"}, std::tuple{ "A2","A3","B3","B2"}, 
-                                                                                                std::tuple{ "A2","A3","C3","C2"}, std::tuple{ "A2","A4","A5","B4"}, std::tuple{ "A2","A4","A5","C1"}, 
-                                                                                                std::tuple{ "A2","A4","B4","A5"}, std::tuple{ "A2","A4","B4","B3"}, std::tuple{ "A2","A4","C2","A3"}, 
-                                                                                                std::tuple{ "A2","A4","C2","C1"}, std::tuple{ "A2","A5","A1","C1"}, std::tuple{ "A2","A5","B4","B1"}, 
-                                                                                                std::tuple{ "A2","B1","B2","B5"}, std::tuple{ "A2","B1","B5","B2"}, std::tuple{ "A2","B1","B5","B4"}, 
-                                                                                                std::tuple{ "A2","B2","B5","B3"}, std::tuple{ "A2","B3","B4","B5"}, std::tuple{ "A2","B4","B1","A5"}, 
-                                                                                                std::tuple{ "A2","B5","B3","B2"}, std::tuple{ "A2","C1","C3","C2"}, std::tuple{ "A2","C1","C3","C4"}, 
+    std::vector<std::tuple<std::string, std::string, std::string, std::string> > expected_cone{ std::tuple{ "A2","A1","B1","A5"}, std::tuple{ "A2","A1","C4","C1"},
+                                                                                                std::tuple{ "A2","A3","A4","B3"}, std::tuple{ "A2","A3","A4","C2"},
+                                                                                                std::tuple{ "A2","A3","B3","A4"}, std::tuple{ "A2","A3","B3","B2"}, 
+                                                                                                std::tuple{ "A2","A3","C3","C2"}, std::tuple{ "A2","A4","A5","B4"},
+                                                                                                std::tuple{ "A2","A4","A5","C1"}, std::tuple{ "A2","A4","B4","A5"},
+                                                                                                std::tuple{ "A2","A4","B4","B3"}, std::tuple{ "A2","A4","C2","A3"}, 
+                                                                                                std::tuple{ "A2","A4","C2","C1"}, std::tuple{ "A2","A5","A1","C1"},
+                                                                                                std::tuple{ "A2","A5","B4","B1"}, std::tuple{ "A2","B1","B2","B5"},
+                                                                                                std::tuple{ "A2","B1","B5","B2"}, std::tuple{ "A2","B1","B5","B4"}, 
+                                                                                                std::tuple{ "A2","B2","B5","B3"}, std::tuple{ "A2","B3","B4","B5"},
+                                                                                                std::tuple{ "A2","B4","B1","A5"}, std::tuple{ "A2","B5","B3","B2"},
+                                                                                                std::tuple{ "A2","C1","C3","C2"}, std::tuple{ "A2","C1","C3","C4"}, 
                                                                                               };
 
   ASSERT_EQ(expected_cone, cone_triang);
 }
+
+

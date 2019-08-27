@@ -5,7 +5,7 @@
 
 template <typename V, bool undirected>
 auto graph_lib::find_all_connected_vertices_of_the_same_degree(graph_lib::graph<V,undirected> const & g,
-                                                               typename graph_lib::graph<V,undirected>::edges_size_type const & order)
+                                                               typename graph_lib::graph<V,undirected>::edges_size_type const & degree)
     -> typename std::vector<std::pair<V,V>>
 {
     std::vector<std::pair<V,V>> ret_val{};
@@ -16,11 +16,11 @@ auto graph_lib::find_all_connected_vertices_of_the_same_degree(graph_lib::graph<
     for (auto it = g.cbegin(); it != g.cend(); ++it)
     {
         auto const & [vertex, edges] = *it;
-        if(g.degree(vertex) == order)
+        if(g.degree(vertex) == degree)
         {
             for (auto const & adjacent_vertex : std::as_const(edges))
             {
-                if(g.degree(adjacent_vertex) == order)
+                if(g.degree(adjacent_vertex) == degree)
                 {
                     ret_val.emplace_back(std::pair{vertex, adjacent_vertex});
                 }
@@ -57,8 +57,6 @@ auto graph_lib::find_triangular_faces(graph_lib::graph<V,undirected> const & g)
 
     for (auto & [u, edges] : temp)
     {
-        // TODO: optimize this (this is O(n^2), bad, so bad, ...)
-        // https://media.tenor.com/images/3ac6a44c0b0c650c7f53390553c5058a/tenor.gif
         for (size_t i = 0; i< std::size(edges); ++i)
         {
             auto v = edges.at(i);
