@@ -3,6 +3,22 @@
 #include <utility>
 #include <tuple>
 
+
+/*
+
+Let L be an initially empty list;
+for each vertex v in G.vertices()
+{
+    if ( G.degree(v) == d) then
+        for each vertex u in G.adjacentVertices(v)
+        {
+            if (G.degree(u) == d) then
+                L.insertLast ((v,u));// insert edge (v,u) into L
+        }
+}
+
+*/
+
 template <typename V, bool undirected>
 auto graph_lib::find_all_connected_vertices_of_the_same_degree(graph_lib::graph<V,undirected> const & g,
                                                                typename graph_lib::graph<V,undirected>::edges_size_type const & degree)
@@ -11,8 +27,6 @@ auto graph_lib::find_all_connected_vertices_of_the_same_degree(graph_lib::graph<
     std::vector<std::pair<V,V>> ret_val{};
     ret_val.reserve(g.num_edges());
 
-    //TODO: fix it so ranged for works with const iterators
-    //for (auto const & [vertex, edges] : std::as_const(g))
     for (auto it = g.cbegin(); it != g.cend(); ++it)
     {
         auto const & [vertex, edges] = *it;
@@ -116,4 +130,37 @@ std::ostream & operator<<(std::ostream & ost, graph_lib::graph<V,undirected> con
     }
 
     return ost;
+}
+
+/*
+
+Let Q be an initially empty priority queue;
+for each vertex v in G.vertices() {
+    Q.insertItem (G.degree(v), v); // insert a vertex v with degree of v as key into Q
+}
+
+NOTE: instead of priority queue (std::priority_queue) std::vecotor is used
+    Priority queu has const time complexity for finding min element but insert is logn
+        Creating a priority queue of n elements would than take O(nlogn)
+    Vector has cosnt time time complexity for inserting elements
+        If vecotor is sorted, which takes O(nlogn) than min element is the first element and finding it is cosnt time
+    Becaues of this and vector's simpler interface, vector is used.
+*/
+
+template <typename V, bool undirected>
+auto graph_lib::find_orders_of_vertices(graph<V,undirected> const & g)
+    -> typename std::vector<std::pair<V, typename graph<V,undirected>::edges_size_type>>
+{
+    std::vector<std::pair<V, typename graph<V,undirected>::edges_size_type>> vec{};
+    vec.reserve(g.num_vertices());
+
+    for (auto it = g.cbegin(); it != g.cend(); ++it)
+    {
+        vec.emplace_back(std::pair{it->first, std::size(it->second)});
+    }
+
+    std::sort(std::begin(vec), std::end(vec), [](auto const & first, auto const & secod)
+                                                {return first.second < secod.second;});
+
+    return vec;
 }

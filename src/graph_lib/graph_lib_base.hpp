@@ -8,8 +8,12 @@ namespace graph_lib{
     class graph;
 
     template <typename V, bool undirected>
+    auto find_orders_of_vertices(graph<V,undirected> const & g)
+        -> typename std::vector<std::pair<V, typename graph<V,undirected>::edges_size_type>>;
+
+    template <typename V, bool undirected>
     auto find_all_connected_vertices_of_the_same_degree(graph<V,undirected> const & g,
-                                                        typename graph<V,undirected>::size_type const & degree)
+                                                        typename graph<V,undirected>::edges_size_type const & degree)
         -> typename std::vector<std::pair<V,V>>;
     
     template <typename V, bool undirected>

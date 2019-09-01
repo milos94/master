@@ -5,7 +5,7 @@
 #include "graph_algorithms.hpp"
 
 // included only in case some debug lines are needed
-//#include <iostream>
+#include <iostream>
 
 TEST(algorithms, find_all_connected_vertices_of_the_same_degree)
 {
@@ -153,4 +153,45 @@ TEST(algorithms, cone_triangulation)
   ASSERT_EQ(expected_cone, cone_triang);
 }
 
+TEST(algorithms, find_orders_of_vertices)
+{
+  graph_lib::graph<std::string> g{ std::vector
+                                              { std::pair{std::string{"A1"}, std::vector<std::string>{"A2","A5","B1","C1","C4"} },
+                                                std::pair{std::string{"A2"}, std::vector<std::string>{"A1","A3","B1","B2","C3","C4"} },
+                                                std::pair{std::string{"A3"}, std::vector<std::string>{"A2","A4","B2","B3","C2","C3"} },
+                                                std::pair{std::string{"A4"}, std::vector<std::string>{"A3","A5","B3","B4","C1","C2"} },
+                                                std::pair{std::string{"A5"}, std::vector<std::string>{"A1","A4","B1","B4","C1"} },
+                                                std::pair{std::string{"B1"}, std::vector<std::string>{"A1","A2","A5","B2","B4","B5"} },
+                                                std::pair{std::string{"B2"}, std::vector<std::string>{"A2","A3","B1","B3","B5"} },
+                                                std::pair{std::string{"B3"}, std::vector<std::string>{"A3","A4","B2","B4","B5"} },
+                                                std::pair{std::string{"B4"}, std::vector<std::string>{"A4","A5","B1","B3","B5"} },
+                                                std::pair{std::string{"B5"}, std::vector<std::string>{"B1","B2","B3","B4"} },
+                                                std::pair{std::string{"C1"}, std::vector<std::string>{"A1","A4","A5","C2","C3","C4"} },
+                                                std::pair{std::string{"C2"}, std::vector<std::string>{"A3","A4","C1","C3"} },
+                                                std::pair{std::string{"C3"}, std::vector<std::string>{"A2","A3","C1","C2","C4"} },
+                                                std::pair{std::string{"C4"}, std::vector<std::string>{"A1","A2","C1","C3"} } 
+                                              }
+                                   };
+  
+  std::vector<std::pair<std::string, typename graph_lib::graph<std::string>::edges_size_type>> vec{
+                                                                                          std::pair{std::string{"B5"}, graph_lib::graph<std::string>::edges_size_type{4}},
+                                                                                          std::pair{std::string{"C2"}, graph_lib::graph<std::string>::edges_size_type{4}},
+                                                                                          std::pair{std::string{"C4"}, graph_lib::graph<std::string>::edges_size_type{4}},
+                                                                                          std::pair{std::string{"A1"}, graph_lib::graph<std::string>::edges_size_type{5}},
+                                                                                          std::pair{std::string{"A5"}, graph_lib::graph<std::string>::edges_size_type{5}},
+                                                                                          std::pair{std::string{"B2"}, graph_lib::graph<std::string>::edges_size_type{5}},
+                                                                                          std::pair{std::string{"B3"}, graph_lib::graph<std::string>::edges_size_type{5}},
+                                                                                          std::pair{std::string{"B4"}, graph_lib::graph<std::string>::edges_size_type{5}},
+                                                                                          std::pair{std::string{"C3"}, graph_lib::graph<std::string>::edges_size_type{5}},
+                                                                                          std::pair{std::string{"A2"}, graph_lib::graph<std::string>::edges_size_type{6}},
+                                                                                          std::pair{std::string{"A3"}, graph_lib::graph<std::string>::edges_size_type{6}},
+                                                                                          std::pair{std::string{"A4"}, graph_lib::graph<std::string>::edges_size_type{6}},
+                                                                                          std::pair{std::string{"B1"}, graph_lib::graph<std::string>::edges_size_type{6}},
+                                                                                          std::pair{std::string{"C1"}, graph_lib::graph<std::string>::edges_size_type{6}}                                                                                    
+  };
 
+  auto res = graph_lib::find_orders_of_vertices(g);
+
+  ASSERT_EQ(res, vec);
+
+}
